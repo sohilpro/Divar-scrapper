@@ -1,9 +1,7 @@
-// 1. فراخوانی فایل .env از مسیر اصلی پروژه
 require("dotenv").config({ path: "./.env" });
 
-// 2. تعریف متغیرهای مشترک برای جلوگیری از تکرار
+// متغیرهای مشترک (بدون پورت)
 const sharedEnv = {
-  PORT: process.env.PORT,
   USER_PHONE: process.env.USER_PHONE,
   USER_PASSWORD: process.env.USER_PASSWORD,
   TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
@@ -21,7 +19,8 @@ module.exports = {
       instances: 1,
       exec_mode: "fork",
       watch: false,
-      env: sharedEnv, // تزریق همه متغیرها
+      // پورت اختصاصی: 3001
+      env: { ...sharedEnv, PORT: 3001 },
     },
     {
       name: "DIV-QOM-ARAK",
@@ -30,7 +29,8 @@ module.exports = {
       instances: 1,
       exec_mode: "fork",
       watch: false,
-      env: sharedEnv,
+      // پورت اختصاصی: 3002
+      env: { ...sharedEnv, PORT: 3002 },
     },
     {
       name: "DIV-SHIRAZ-ISFAHAN",
@@ -39,7 +39,8 @@ module.exports = {
       instances: 1,
       exec_mode: "fork",
       watch: false,
-      env: sharedEnv,
+      // پورت اختصاصی: 3003
+      env: { ...sharedEnv, PORT: 3003 },
     },
     {
       name: "DIV-TEHRAN-SEMNAN",
@@ -48,7 +49,8 @@ module.exports = {
       instances: 1,
       exec_mode: "fork",
       watch: false,
-      env: sharedEnv,
+      // پورت اختصاصی: 3004
+      env: { ...sharedEnv, PORT: 3004 },
     },
     {
       name: "DIV-YAZD-GILAN",
@@ -57,7 +59,8 @@ module.exports = {
       instances: 1,
       exec_mode: "fork",
       watch: false,
-      env: sharedEnv,
+      // پورت اختصاصی: 3005
+      env: { ...sharedEnv, PORT: 3005 },
     },
   ],
 };
