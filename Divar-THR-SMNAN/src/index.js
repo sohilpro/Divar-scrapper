@@ -1,4 +1,5 @@
-// require("dotenv").config();
+const path = require('path');
+require("dotenv").config({ path: path.join(__dirname, '../../.env') });
 const scraper = require("./services/scraper");
 const telegram = require("./services/telegram");
 const filter = require("./services/filters");
