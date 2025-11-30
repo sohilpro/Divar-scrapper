@@ -65,7 +65,7 @@ async function processAds(ads, province) {
 🚨 *خودروی تصادفی پیدا شد*
 ──────────────
 📌 *عنوان:* ${ad.title}
-💰 *قیمت:* ${adData.formattedPrice} تومان
+💰 *قیمت:* ${adData.formattedPrice}
 
 🌍 *استان:* ${province.name}
 🚗 *سایت:* ${ad.site.toUpperCase()}
