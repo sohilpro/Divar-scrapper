@@ -2,20 +2,10 @@
 module.exports = {
   TARGET_LOCATIONS: [
     {
-      name: "تهران",
-      search_url_param: "tehran-province",
-      telegram_chat_id: process.env.TELEGRAM_CHAT_ID_TEHRAN,
+      name: "مازندران",
+      search_url_param: "mazandaran-province",
+      telegram_chat_id: process.env.TELEGRAM_CHAT_ID_MAZANDARAN,
     },
-    {
-      name: "سمنان",
-      search_url_param: "semnan-province",
-      telegram_chat_id: process.env.TELEGRAM_CHAT_ID_SEMNAN,
-    },
-    // {
-    //   name: "اصفهان",
-    //   search_url_param: "isfahan-province",
-    //   telegram_chat_id: process.env.TELEGRAM_CHAT_ID_ESFAHAN,
-    // },
   ],
   SEARCH_QUERIES: [
     "تصادفی",
