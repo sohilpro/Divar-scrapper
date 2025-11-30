@@ -1,4 +1,4 @@
-// require("dotenv").config();
+require("dotenv").config();
 const scraper = require("./services/scraper");
 const telegram = require("./services/telegram");
 const filter = require("./services/filters");

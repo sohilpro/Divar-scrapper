@@ -1,6 +1,4 @@
-const path = require('path');
-// استفاده از مسیر مطلق برای اطمینان از پیدا شدن فایل .env
-require("dotenv").config({ path: path.join(__dirname, '.env') });
+require("dotenv").config({ path: "./.env" });
 
 const sharedEnv = {
   USER_PHONE: process.env.USER_PHONE,
