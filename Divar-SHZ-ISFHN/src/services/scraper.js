@@ -34,6 +34,7 @@ class Scraper {
           "--no-sandbox",
           "--disable-setuid-sandbox",
           `--window-size=${1920},${1080}`,
+          "--disable-dev-shm-usage",
         ],
         executablePath: "/usr/bin/google-chrome",
       });
