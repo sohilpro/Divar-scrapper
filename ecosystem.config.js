@@ -31,6 +31,7 @@ module.exports = {
         // ✅ اینجا توکن مخصوص مازندران تبدیل میشه به BOT_TOKEN
         BOT_TOKEN: process.env.TOKEN_MAZANDARAN,
       },
+      restart_delay: 3000,
     },
     {
       name: "DIV-QOM-ARAK",
@@ -44,6 +45,7 @@ module.exports = {
         PORT: 3002,
         BOT_TOKEN: process.env.TOKEN_QOM_ARAK, // ✅ توکن قم و اراک
       },
+      restart_delay: 3000,
     },
     {
       name: "DIV-SHIRAZ-ISFAHAN",
@@ -57,6 +59,7 @@ module.exports = {
         PORT: 3003,
         BOT_TOKEN: process.env.TOKEN_SHIRAZ_ISFAHAN, // ✅ توکن شیراز و اصفهان
       },
+      restart_delay: 3000,
     },
     {
       name: "DIV-TEHRAN-SEMNAN",
@@ -70,6 +73,7 @@ module.exports = {
         PORT: 3004,
         BOT_TOKEN: process.env.TOKEN_TEHRAN_SEMNAN, // ✅ توکن تهران و سمنان
       },
+      restart_delay: 3000,
     },
     {
       name: "DIV-YAZD-GILAN",
@@ -83,6 +87,7 @@ module.exports = {
         PORT: 3005,
         BOT_TOKEN: process.env.TOKEN_YAZD_GILAN, // ✅ توکن یزد و گیلان
       },
+      restart_delay: 3000,
     },
   ],
 };

@@ -31,9 +31,15 @@ class Scraper {
       this.browser = await puppeteer.launch({
         headless: "new",
         args: [
+          `--window-size=${1920},${1080}`,
           "--no-sandbox",
           "--disable-setuid-sandbox",
-          `--window-size=${1920},${1080}`,
+          "--disable-dev-shm-usage", // ⚠️ حیاتی: جلوگیری از پر شدن حافظه موقت لینوکس
+          "--disable-accelerated-2d-canvas",
+          "--no-first-run",
+          "--no-zygote",
+          "--single-process", // ⚠️ حیاتی: کاهش مصرف رم
+          "--disable-gpu",
         ],
         executablePath: "/usr/bin/google-chrome",
       });
