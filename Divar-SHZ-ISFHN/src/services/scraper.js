@@ -31,15 +31,10 @@ class Scraper {
       this.browser = await puppeteer.launch({
         headless: "new",
         args: [
-          `--window-size=${1920},${1080}`,
           "--no-sandbox",
           "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage", // ⚠️ حیاتی: جلوگیری از پر شدن حافظه موقت لینوکس
-          "--disable-accelerated-2d-canvas",
-          "--no-first-run",
-          "--no-zygote",
-          // "--single-process", // ⚠️ حیاتی: کاهش مصرف رم
-          "--disable-gpu",
+          `--window-size=${1920},${1080}`,
+          "--disable-dev-shm-usage",
         ],
         executablePath: "/usr/bin/google-chrome",
       });
@@ -183,9 +178,6 @@ class Scraper {
 
     const page = await this.browser.newPage();
     await page.setUserAgent(COMMON_USER_AGENT);
-
-    page.setDefaultNavigationTimeout(90000);
-    page.setDefaultTimeout(90000);
 
     let baseUrl = siteName === "divar" ? config.DIVAR_URL : config.SHEYPOOR_URL;
     baseUrl = baseUrl.replace(/\/+$/, "");
