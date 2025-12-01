@@ -184,6 +184,9 @@ class Scraper {
     const page = await this.browser.newPage();
     await page.setUserAgent(COMMON_USER_AGENT);
 
+    page.setDefaultNavigationTimeout(90000);
+    page.setDefaultTimeout(90000);
+
     let baseUrl = siteName === "divar" ? config.DIVAR_URL : config.SHEYPOOR_URL;
     baseUrl = baseUrl.replace(/\/+$/, "");
 
