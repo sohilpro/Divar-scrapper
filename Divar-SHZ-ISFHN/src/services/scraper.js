@@ -34,6 +34,11 @@ class Scraper {
           "--no-sandbox",
           "--disable-setuid-sandbox",
           `--window-size=${1920},${1080}`,
+          "--disable-dev-shm-usage", // ✅ حیاتی برای جلوگیری از کرش رم
+          "--disable-accelerated-2d-canvas",
+          "--disable-gpu",
+          "--no-first-run",
+          "--no-zygote",
         ],
         executablePath: "/usr/bin/google-chrome",
       });
@@ -178,6 +183,9 @@ class Scraper {
     const page = await this.browser.newPage();
     await page.setUserAgent(COMMON_USER_AGENT);
 
+    page.setDefaultNavigationTimeout(90000);
+    page.setDefaultTimeout(90000);
+
     let baseUrl = siteName === "divar" ? config.DIVAR_URL : config.SHEYPOOR_URL;
     baseUrl = baseUrl.replace(/\/+$/, "");
 
@@ -214,7 +222,7 @@ class Scraper {
         try {
           await page.goto(searchUrl, {
             waitUntil: "domcontentloaded",
-            timeout: 30000,
+            timeout: 90000,
           });
         } catch (navErr) {
           console.warn(
