@@ -4,6 +4,8 @@ const config = require("../config/config");
 const axios = require("axios");
 const { delay, getRandomDelay } = require("../utils/helper");
 const telegram = require("./telegram");
+const fs = require("fs");
+const path = require("path");
 
 const COMMON_USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36";
@@ -46,8 +48,7 @@ class Scraper {
     }
   }
 
-  async login(siteUrl) {
-    // 0. استارت اولیه و راه‌اندازی ربات تلگرام
+  async login(siteUrl, phone = null) {
     if (!this.browser) await this.initBrowser();
 
     const YOUR_TELEGRAM_USER_ID = process.env.YOUR_TELEGRAM_USER_ID;
@@ -97,19 +98,25 @@ class Scraper {
     // 🟠 مرحله ۲: ورود جدید (انتخاب شماره و دریافت کد)
     // ============================================================
 
-    // 1. دریافت شماره تلفن از طریق دکمه تلگرام
-    let phone;
-    try {
-      console.log("📲 Waiting for user to select phone number via Telegram...");
-      // ارسال پیام به شما که نیاز به انتخاب شماره است
-      phone = await telegram.askPhoneNumber(YOUR_TELEGRAM_USER_ID);
-      console.log(`Selected Phone: ${phone}`);
-    } catch (err) {
-      console.error(
-        "❌ Failed to get phone number from Telegram:",
-        err.message
-      );
-      return false;
+    let finalPhone = phone;
+
+    // اگر شماره در آرگومان نبود (null بود)، باید از کاربر بپرسیم
+    if (!finalPhone) {
+      if (!telegram) {
+        console.error(
+          "❌ Telegram bot instance is missing provided to login function."
+        );
+        return false;
+      }
+
+      try {
+        console.log("📲 Phone not provided. Asking user via Telegram...");
+        finalPhone = await telegram.askPhoneNumber(YOUR_TELEGRAM_USER_ID);
+        console.log(`Selected Phone: ${finalPhone}`);
+      } catch (err) {
+        console.error("❌ Failed to get phone number:", err.message);
+        return false;
+      }
     }
 
     const normalizedPhone = phone.startsWith("0") ? phone.substring(1) : phone;
@@ -143,8 +150,8 @@ class Scraper {
 
       await page.type(PHONE_INPUT_SELECTOR, normalizedPhone, { delay: 100 });
 
-      // فشردن اینتر (معمولا در دیوار بعد از شماره اینتر کار میکند)
-      await page.keyboard.press("Enter");
+      // // فشردن اینتر (معمولا در دیوار بعد از شماره اینتر کار میکند)
+      // await page.keyboard.press("Enter");
 
       // --- دریافت OTP ---
       await telegram.sendLog(
@@ -174,6 +181,28 @@ class Scraper {
         .catch(() => {});
 
       console.log("✅ Login successful.");
+
+      // ============================================================
+      // 💾 ذخیره شماره تلفن فعال در فایل (بخش جدید)
+      // ============================================================
+      // try {
+      //   // مسیر فایل ذخیره سازی (مثلاً در پوشه src یا کنار فایل کانفیگ)
+      //   const savePath = path.join(__dirname, "../../active_phone.txt");
+
+      //   // نوشتن شماره در فایل (اگر فایل باشد جایگزین می‌شود، نباشد ساخته می‌شود)
+      //   fs.writeFileSync(savePath, normalizedPhone, "utf8");
+
+      //   console.log(`💾 Active phone number saved to: ${savePath}`);
+      // } catch (fileErr) {
+      //   console.error("❌ Error saving phone number to file:", fileErr.message);
+      // }
+      // ============================================================
+
+      // ارسال پیام موفقیت به تلگرام (همراه با چت آیدی)
+      await telegram.sendLog(
+        `✅ ورود موفقیت آمیز بود!\n📱 شماره فعال: ${normalizedPhone}\nبرای تغییر شماره ربات را /start کنید.`,
+        YOUR_TELEGRAM_USER_ID
+      );
 
       // 🌟 ذخیره کوکی‌ها برای دفعه بعد 🌟
       await saveCookies(page, siteUrl);
