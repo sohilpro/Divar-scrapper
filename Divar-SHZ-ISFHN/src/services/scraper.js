@@ -155,6 +155,16 @@ class Scraper {
       // منتظر کد از سمت شما
       const otpCode = await telegram.getOtpCode(YOUR_TELEGRAM_USER_ID, 120000); // 2 دقیقه وقت
 
+      if (otpCode.length !== 6) {
+        throw new Error("Received OTP is not 6 digits.");
+      }
+
+      // 🔥🔥 مرحله جدید: ارسال پیام تایید کد به کاربر 🔥🔥
+      await telegram.sendLog(
+        `✅ کد 6 رقمی ${otpCode} صحیح است. در حال ورود به سایت...`,
+        YOUR_TELEGRAM_USER_ID
+      );
+
       await page.waitForSelector(OTP_INPUT_SELECTOR, { timeout: 10000 });
       await page.type(OTP_INPUT_SELECTOR, otpCode, { delay: 100 });
 
