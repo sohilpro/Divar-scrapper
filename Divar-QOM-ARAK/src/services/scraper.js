@@ -11,8 +11,8 @@ const COMMON_USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36";
 const MIN_DELAY_MS = 120 * 1000; // 120 ثانیه
 const MAX_DELAY_MS = 300 * 1000; // 30 ثانیه
-const LOGIN_DELAY = 2 * 1000;
-const WAITING_FOR_GOTO = 1.5 * 1000;
+const LOGIN_DELAY = 1.25 * 1000;
+const WAITING_FOR_GOTO = 2 * 1000;
 
 puppeteer.use(StealthPlugin());
 
