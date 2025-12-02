@@ -1,16 +1,20 @@
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-extra");
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const { saveCookies, loadCookies } = require("../utils/cookieManager");
 const config = require("../config/config");
 const axios = require("axios");
 const { delay, getRandomDelay } = require("../utils/helper");
 const telegram = require("./telegram");
-const fs = require("fs");
-const path = require("path");
 
 const COMMON_USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36";
-const MIN_DELAY_MS = 30 * 1000; // 30 ثانیه
-const MAX_DELAY_MS = 75 * 1000; // 75 ثانیه
+const MIN_DELAY_MS = 120 * 1000; // 120 ثانیه
+const MAX_DELAY_MS = 300 * 1000; // 30 ثانیه
+const LOGIN_DELAY = 4 * 1000;
+const WAITING_FOR_GOTO = 1.5 * 1000;
+
+puppeteer.use(StealthPlugin());
 
 // For Divar
 const AD_LINK_SELECTOR = 'a.links-row__item-d5533[href="/new"]';
@@ -23,6 +27,10 @@ const OTP_INPUT_SELECTOR =
 const LOGIN_BUTTON_SELECTOR =
   "button.kt-button--primary.auth-actions__submit-button";
 
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("🔥 Unhandled Rejection:", reason);
+});
+
 class Scraper {
   constructor() {
     this.browser = null;
@@ -31,18 +39,22 @@ class Scraper {
   async initBrowser() {
     if (!this.browser) {
       this.browser = await puppeteer.launch({
-        headless: "new",
+        headless: true,
         args: [
           "--no-sandbox",
           "--disable-setuid-sandbox",
-          `--window-size=${1920},${1080}`,
-          "--disable-dev-shm-usage", // ✅ حیاتی برای جلوگیری از کرش رم
+          "--disable-dev-shm-usage",
           "--disable-accelerated-2d-canvas",
           "--disable-gpu",
           "--no-first-run",
           "--no-zygote",
+          "--disable-background-networking",
+          "--disable-background-timer-throttling",
+          "--disable-renderer-backgrounding",
+          "--disable-backgrounding-occluded-windows",
+          `--window-size=1920,1080`,
         ],
-        executablePath: "/usr/bin/google-chrome",
+        // executablePath: "/usr/bin/google-chrome",
       });
       console.log("✅ Browser launched.");
     }
@@ -98,26 +110,26 @@ class Scraper {
     // 🟠 مرحله ۲: ورود جدید (انتخاب شماره و دریافت کد)
     // ============================================================
 
-    let finalPhone = phone;
+    // let finalPhone = phone;
 
     // اگر شماره در آرگومان نبود (null بود)، باید از کاربر بپرسیم
-    if (!finalPhone) {
-      if (!telegram) {
-        console.error(
-          "❌ Telegram bot instance is missing provided to login function."
-        );
-        return false;
-      }
+    // if (!finalPhone) {
+    //   if (!telegram) {
+    //     console.error(
+    //       "❌ Telegram bot instance is missing provided to login function."
+    //     );
+    //     return false;
+    //   }
 
-      try {
-        console.log("📲 Phone not provided. Asking user via Telegram...");
-        finalPhone = await telegram.askPhoneNumber(YOUR_TELEGRAM_USER_ID);
-        console.log(`Selected Phone: ${finalPhone}`);
-      } catch (err) {
-        console.error("❌ Failed to get phone number:", err.message);
-        return false;
-      }
-    }
+    //   try {
+    //     console.log("📲 Phone not provided. Asking user via Telegram...");
+    //     finalPhone = await telegram.askPhoneNumber(YOUR_TELEGRAM_USER_ID);
+    //     console.log(`Selected Phone: ${finalPhone}`);
+    //   } catch (err) {
+    //     console.error("❌ Failed to get phone number:", err.message);
+    //     return false;
+    //   }
+    // }
 
     const normalizedPhone = phone.startsWith("0") ? phone.substring(1) : phone;
 
@@ -143,7 +155,7 @@ class Scraper {
       // --- پر کردن شماره موبایل ---
       await page.waitForSelector(PHONE_INPUT_SELECTOR, { timeout: 10000 });
 
-      await delay(1000);
+      await delay(LOGIN_DELAY);
       await page.evaluate((selector) => {
         document.querySelector(selector).value = "";
       }, PHONE_INPUT_SELECTOR);
@@ -257,7 +269,7 @@ class Scraper {
           siteName === "divar" ? buildDivarUrl(phrase) : buildDivarUrl(phrase);
 
         console.log(`ℹ️ Navigating to: ${searchUrl}`);
-
+        await delay(WAITING_FOR_GOTO);
         try {
           await page.goto(searchUrl, {
             waitUntil: "domcontentloaded",
@@ -454,7 +466,7 @@ class Scraper {
     const siteUrl = isDivar ? config.DIVAR_URL : config.SHEYPOOR_URL;
 
     await loadCookies(page, siteUrl);
-
+    await delay(WAITING_FOR_GOTO);
     try {
       await page.goto(adUrl, {
         waitUntil: "networkidle2",
