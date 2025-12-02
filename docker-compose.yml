@@ -14,12 +14,12 @@ x-bot-config: &bot-config
 
 services:
   # ===================== REDIS SERVICE =====================
-  # redis:
-  #   image: redis:alpine
-  #   container_name: scraper-redis
-  #   restart: always
-  #   ports:
-  #     - "6379:6379"
+  redis:
+    image: redis:alpine
+    container_name: divar-redis
+    restart: always
+    ports:
+      - "6380:6379"
     # ports:           <-- این را کامنت کردم تا ارور Port already in use ندهد
 
   # ===================== SHEYPOOR BOTS =====================
