@@ -1,10 +1,10 @@
 require("dotenv").config({ path: "./.env" });
 
 const sharedEnv = {
+  // ... (همان متغیرهای قبلی) ...
   USER_PHONE: process.env.USER_PHONE,
   USER_PASSWORD: process.env.USER_PASSWORD,
   YOUR_TELEGRAM_USER_ID: process.env.YOUR_TELEGRAM_USER_ID,
-
   TELEGRAM_CHAT_ID_GILAN: process.env.TELEGRAM_CHAT_ID_GILAN,
   TELEGRAM_CHAT_ID_YAZD: process.env.TELEGRAM_CHAT_ID_YAZD,
   TELEGRAM_CHAT_ID_SHIRAZ: process.env.TELEGRAM_CHAT_ID_SHIRAZ,
@@ -25,10 +25,13 @@ module.exports = {
       instances: 1,
       exec_mode: "fork",
       watch: false,
+      // 🔽 پیشنهاد اصلاح: ۴۰۰ یا ۵۰۰ مگابایت
+      max_memory_restart: "450M",
+      // 🔽 پیشنهاد اصلاح: ۵ ثانیه وقفه قبل از روشن شدن مجدد
+      restart_delay: 5000,
       env: {
         ...sharedEnv,
         PORT: 3001,
-        // ✅ اینجا توکن مخصوص مازندران تبدیل میشه به BOT_TOKEN
         BOT_TOKEN: process.env.TOKEN_MAZANDARAN,
       },
     },
@@ -39,10 +42,12 @@ module.exports = {
       instances: 1,
       exec_mode: "fork",
       watch: false,
+      max_memory_restart: "450M", // اصلاح شده
+      restart_delay: 5000, // اضافه شده
       env: {
         ...sharedEnv,
         PORT: 3002,
-        BOT_TOKEN: process.env.TOKEN_QOM_ARAK, // ✅ توکن قم و اراک
+        BOT_TOKEN: process.env.TOKEN_QOM_ARAK,
       },
     },
     {
@@ -52,10 +57,12 @@ module.exports = {
       instances: 1,
       exec_mode: "fork",
       watch: false,
+      max_memory_restart: "450M",
+      restart_delay: 5000,
       env: {
         ...sharedEnv,
         PORT: 3003,
-        BOT_TOKEN: process.env.TOKEN_SHIRAZ_ISFAHAN, // ✅ توکن شیراز و اصفهان
+        BOT_TOKEN: process.env.TOKEN_SHIRAZ_ISFAHAN,
       },
     },
     {
@@ -65,10 +72,12 @@ module.exports = {
       instances: 1,
       exec_mode: "fork",
       watch: false,
+      max_memory_restart: "450M",
+      restart_delay: 5000,
       env: {
         ...sharedEnv,
         PORT: 3004,
-        BOT_TOKEN: process.env.TOKEN_TEHRAN_SEMNAN, // ✅ توکن تهران و سمنان
+        BOT_TOKEN: process.env.TOKEN_TEHRAN_SEMNAN,
       },
     },
     {
@@ -78,10 +87,12 @@ module.exports = {
       instances: 1,
       exec_mode: "fork",
       watch: false,
+      max_memory_restart: "450M",
+      restart_delay: 5000,
       env: {
         ...sharedEnv,
         PORT: 3005,
-        BOT_TOKEN: process.env.TOKEN_YAZD_GILAN, // ✅ توکن یزد و گیلان
+        BOT_TOKEN: process.env.TOKEN_YAZD_GILAN,
       },
     },
   ],
