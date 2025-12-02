@@ -1,0 +1,75 @@
+version: "3.8"
+
+x-bot-config: &bot-config
+  build: .
+  restart: always
+  shm_size: "2gb"
+  env_file: .env
+  deploy:
+    resources:
+      limits:
+        memory: 600M
+      reservations:
+        memory: 200M
+
+services:
+  # ===================== REDIS SERVICE =====================
+  redis:
+    image: redis:alpine
+    container_name: scraper-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    # ports:           <-- این را کامنت کردم تا ارور Port already in use ندهد
+
+  # ===================== SHEYPOOR BOTS =====================
+
+  # 1. MAZANDARAN
+  divar-mazandaran:
+    <<: *bot-config
+    container_name: div-mazandaran
+    command: node Divar-MZNDRN/src/index.js
+    environment:
+      - PORT=3001
+      - BOT_TOKEN=${TOKEN_MAZANDARAN}
+      - REDIS_HOST=redis # ✅ اتصال به ردیس
+
+  # 2. QOM - ARAK
+  divar-qom-arak:
+    <<: *bot-config
+    container_name: div-qom-arak
+    command: node Divar-QOM-ARAK/src/index.js
+    environment:
+      - PORT=3002
+      - BOT_TOKEN=${TOKEN_QOM_ARAK}
+      - REDIS_HOST=redis
+
+  # 3. SHIRAZ - ISFAHAN
+  divar-shiraz-isfahan:
+    <<: *bot-config
+    container_name: div-shiraz-isfahan
+    command: node Divar-SHZ-ISFHN/src/index.js
+    environment:
+      - PORT=3003
+      - BOT_TOKEN=${TOKEN_SHIRAZ_ISFAHAN}
+      - REDIS_HOST=redis
+
+  # 4. TEHRAN - SEMNAN
+  divar-tehran-semnan:
+    <<: *bot-config
+    container_name: div-tehran-semnan
+    command: node Divar-THR-SMNAN/src/index.js
+    environment:
+      - PORT=3004
+      - BOT_TOKEN=${TOKEN_TEHRAN_SEMNAN}
+      - REDIS_HOST=redis
+
+  # 5. YAZD - GILAN
+  divar-yazd-gilan:
+    <<: *bot-config
+    container_name: div-yazd-gilan
+    command: node Divar-YAZD-GILAN/src/index.js
+    environment:
+      - PORT=3005
+      - BOT_TOKEN=${TOKEN_YAZD_GILAN}
+      - REDIS_HOST=redis
