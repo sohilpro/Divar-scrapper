@@ -7,12 +7,22 @@ const axios = require("axios");
 const { delay, getRandomDelay } = require("../utils/helper");
 const telegram = require("./telegram");
 
-const COMMON_USER_AGENT =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36";
+const USER_AGENTS = [
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0",
+  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.61",
+];
+
+const randomDelay = (min = 2000, max = 5000) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
 const MIN_DELAY_MS = 120 * 1000; // 120 ثانیه
 const MAX_DELAY_MS = 300 * 1000; // 30 ثانیه
 const LOGIN_DELAY = 1 * 1000;
-const WAITING_FOR_GOTO = 1.5 * 1000;
+const WAITING_FOR_GOTO = randomDelay();
 
 puppeteer.use(StealthPlugin());
 
@@ -72,7 +82,11 @@ class Scraper {
     // ============================================================
     console.log("🔄 Checking for existing session (Cookies)...");
     const cookiePage = await this.browser.newPage();
-    await cookiePage.setUserAgent(COMMON_USER_AGENT);
+    const randomUA =
+      USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+    console.log(`🎭 Using User-Agent: ${randomUA.substring(0, 30)}...`);
+
+    await cookiePage.setUserAgent(randomUA);
 
     try {
       // لود کردن کوکی‌ها
@@ -137,7 +151,7 @@ class Scraper {
 
     // شروع پروسه لاگین در مرورگر
     const page = await this.browser.newPage();
-    await page.setUserAgent(COMMON_USER_AGENT);
+    await page.setUserAgent(randomUA);
 
     console.log(`Starting login flow for ${phone}...`);
     await page.goto(siteUrl, { waitUntil: "networkidle2" });
@@ -234,7 +248,12 @@ class Scraper {
     if (!this.browser) await this.initBrowser();
 
     const page = await this.browser.newPage();
-    await page.setUserAgent(COMMON_USER_AGENT);
+
+    const randomUA =
+      USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+    console.log(`🎭 Using User-Agent: ${randomUA.substring(0, 30)}...`);
+
+    await page.setUserAgent(randomUA);
 
     page.setDefaultNavigationTimeout(90000);
     page.setDefaultTimeout(90000);
@@ -491,7 +510,12 @@ class Scraper {
   async getPhoneNumber(adUrl) {
     if (!this.browser) await this.initBrowser();
     const page = await this.browser.newPage();
-    await page.setUserAgent(COMMON_USER_AGENT);
+
+    const randomUA =
+      USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+    console.log(`🎭 Using User-Agent: ${randomUA.substring(0, 30)}...`);
+
+    await page.setUserAgent(randomUA);
 
     const isDivar = adUrl.includes("divar");
     const siteUrl = isDivar ? config.DIVAR_URL : config.SHEYPOOR_URL;
@@ -556,7 +580,7 @@ class Scraper {
               Authorization: authorizationHeader,
               "x-render-type": "CSR",
               "Content-Type": "application/json",
-              "User-Agent": COMMON_USER_AGENT,
+              "User-Agent": randomUA,
               Cookie: cookieHeader,
               "Accept-Language": "fa-IR,fa;q=0.9",
               Origin: "https://divar.ir",
@@ -607,7 +631,7 @@ class Scraper {
         const response = await axios.get(sheypoorApiUrl, {
           headers: {
             Cookie: cookieHeader,
-            "User-Agent": COMMON_USER_AGENT,
+            "User-Agent": randomUA,
           },
           timeout: 15000,
         }); // 3. ✅ استخراج شماره از پاسخ API (تطبیق با ساختار JSON ارسالی)
