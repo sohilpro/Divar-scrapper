@@ -57,10 +57,22 @@ class TelegramService {
       console.error(
         `[Telegram] Failed to send photo message to ${chatId}: ${errorMessage}`
       );
+
       // تلاش مجدد برای ارسال متن خالی در صورت خرابی عکس
+      // نکته: مستقیماً از متد sendMessage استفاده می‌کنیم تا به this.sendLog وابسته نباشیم
       if (imageUrl) {
         console.log("[Telegram] Retrying with text only...");
-        return this.sendLog(caption, chatId, isCritical);
+        try {
+          await this.bot.telegram.sendMessage(chatId, caption, {
+            parse_mode: "Markdown",
+            disable_notification: !isCritical,
+            disable_web_page_preview: true,
+          });
+          return true;
+        } catch (retryError) {
+          console.error(`[Telegram] Retry failed: ${retryError.message}`);
+          return false;
+        }
       }
       return false;
     }

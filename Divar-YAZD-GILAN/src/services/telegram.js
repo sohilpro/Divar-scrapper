@@ -3,7 +3,7 @@ const fs = require("fs"); // 🆕 fs اضافه شد
 const path = require("path"); // 🆕 path اضافه شد
 require("dotenv").config();
 
-const BOT_TOKEN = process.env.TOKEN_YAZD_GILAN;
+const BOT_TOKEN = process.env.TOKEN_SHIRAZ_ISFAHAN;
 
 class TelegramService {
   /** @type {Telegraf | null} */
@@ -57,10 +57,22 @@ class TelegramService {
       console.error(
         `[Telegram] Failed to send photo message to ${chatId}: ${errorMessage}`
       );
+
       // تلاش مجدد برای ارسال متن خالی در صورت خرابی عکس
+      // نکته: مستقیماً از متد sendMessage استفاده می‌کنیم تا به this.sendLog وابسته نباشیم
       if (imageUrl) {
         console.log("[Telegram] Retrying with text only...");
-        return this.sendLog(caption, chatId, isCritical);
+        try {
+          await this.bot.telegram.sendMessage(chatId, caption, {
+            parse_mode: "Markdown",
+            disable_notification: !isCritical,
+            disable_web_page_preview: true,
+          });
+          return true;
+        } catch (retryError) {
+          console.error(`[Telegram] Retry failed: ${retryError.message}`);
+          return false;
+        }
       }
       return false;
     }
@@ -128,7 +140,7 @@ class TelegramService {
 
     await this.bot.telegram.sendMessage(
       expectedChatId,
-      "🤖 **لطفا شماره موبایل مورد نظر برای ورود استان یزد و گیلان را انتخاب کنید:**",
+      "🤖 **لطفا شماره موبایل مورد نظر برای ورود شیراز اصفهان را انتخاب کنید:**",
       Markup.inlineKeyboard(buttons)
     );
 

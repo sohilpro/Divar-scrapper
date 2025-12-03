@@ -224,12 +224,16 @@ async function processAds(ads, province) {
 ──────────────
 🔗 [مشاهده آگهی در دیوار](${ad.url})
 `;
-      await telegram.sendPhotoLog(
-        adData.imageUrl,
-        caption,
-        province.telegram_chat_id,
-        true
-      );
+
+      if (adData) {
+        await telegram.sendPhotoLog(
+          adData.imageUrl,
+          caption,
+          province.telegram_chat_id
+        );
+      } else {
+        console.error("Scraper data is null!");
+      }
       // await telegram.sendLog(message, province.telegram_chat_id);
       await redisManager.markAdAsProcessed(ad.id);
       count++;
