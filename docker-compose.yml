@@ -18,11 +18,14 @@ services:
     image: redis:alpine
     container_name: divar-redis
     restart: always
+    # این کامند برای ذخیره دیتا روی دیسک الزامی است تا با ریستارت دیتای آگهی‌های تکراری نپرد
+    command: redis-server --appendonly yes
+    volumes:
+      - ./redis-data:/data
     ports:
-      - "6380:6379"
-    # ports:           <-- این را کامنت کردم تا ارور Port already in use ندهد
+      - "6380:6379" # بیرون: 6380 | داخل: 6379
 
-  # ===================== SHEYPOOR BOTS =====================
+  # ===================== DIVAR BOTS =====================
 
   # 1. MAZANDARAN
   divar-mazandaran:
@@ -32,7 +35,8 @@ services:
     environment:
       - PORT=3001
       - BOT_TOKEN=${TOKEN_MAZANDARAN}
-      - REDIS_HOST=redis # ✅ اتصال به ردیس
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379 # 👈👈 مهم: داخل داکر باید به پورت اصلی وصل شود
 
   # 2. QOM - ARAK
   divar-qom-arak:
@@ -43,6 +47,7 @@ services:
       - PORT=3002
       - BOT_TOKEN=${TOKEN_QOM_ARAK}
       - REDIS_HOST=redis
+      - REDIS_PORT=6379 # 👈 اصلاح شد
 
   # 3. SHIRAZ - ISFAHAN
   divar-shiraz-isfahan:
@@ -53,6 +58,7 @@ services:
       - PORT=3003
       - BOT_TOKEN=${TOKEN_SHIRAZ_ISFAHAN}
       - REDIS_HOST=redis
+      - REDIS_PORT=6379 # 👈 اصلاح شد
 
   # 4. TEHRAN - SEMNAN
   divar-tehran-semnan:
@@ -63,6 +69,7 @@ services:
       - PORT=3004
       - BOT_TOKEN=${TOKEN_TEHRAN_SEMNAN}
       - REDIS_HOST=redis
+      - REDIS_PORT=6379 # 👈 اصلاح شد
 
   # 5. YAZD - GILAN
   divar-yazd-gilan:
@@ -73,3 +80,4 @@ services:
       - PORT=3005
       - BOT_TOKEN=${TOKEN_YAZD_GILAN}
       - REDIS_HOST=redis
+      - REDIS_PORT=6379 # 👈 اصلاح شد
